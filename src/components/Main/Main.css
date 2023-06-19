@@ -1,0 +1,25 @@
+.main {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1279px) {
+    .main {
+        max-width: 768px;
+    }
+
+}
+
+@media screen and (max-width: 767px) {
+    .main {
+        max-width: 292px;
+    }
+}
+
+/* * {
+outline: 1px solid red;
+} */
