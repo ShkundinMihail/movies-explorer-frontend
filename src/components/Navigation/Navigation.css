@@ -1,4 +1,4 @@
-.navigation__container-right {
+.nav-container-right {
     max-width: 184px;
     width: 100%;
     margin: 0;
@@ -10,7 +10,7 @@
     grid-column-gap: 30px;
 }
 
-.navigation__container-left {
+.nav-container-left {
     padding: 17px 646px 40px 0;
     min-width: 211px;
     display: flex;
@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: space-between;
 }
-.navigation__login {
+.nav-container-right__login {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
     color: black;
 }
 
-.navigation__register {
+.nav-container-right__register {
     margin-left: 1px;
     display: flex;
     cursor: pointer;
@@ -50,7 +50,7 @@
     color: black;
 }
 
-.navigation__navlink {
+.nav-container-left__navlink {
     font-family: Inter;
     font-size: 13px;
     font-weight: 400;
@@ -60,42 +60,42 @@
     opacity: 0.8;
 }
 
-.navigation__navlink_weight {
+.nav-container-left__navlink_weight {
     font-weight: 500;
 }
 
-.navigation__navlink_position {
+.nav-container-left__navlink_position {
 margin-left: 3px;
 }
-.navigation__login:hover {
+.nav-container-right__login:hover {
     transition: 0.2s;
     filter: drop-shadow(0px 4px 4px rgba(11, 183, 68, 0.25)); 
 }
 
-.navigation__navlink:hover,
-.navigation__register:hover {
+.nav-container-left__navlink:hover,
+.nav-container-right__register:hover {
     transition: 0.1s;
     border-bottom: 1px solid #000;
     opacity: 1;
     color: black;
 }
 @media screen and (max-width: 1279px) {
-    .navigation__container-left {
+    .nav-container-left {
         padding-right: 200px;
     }
 
-    .navigation__container-right {
+    .nav-container-right {
         padding: 18px 30px 42px 0;
     }
 
-    .navigation__burger {
+    .nav-container-right__burger {
         border: none;
         background: transparent;
         margin: 5px 0 0 140px;
         padding: 0;
         cursor: pointer;
     }
-    .navigation__burger:hover {
+    .nav-container-right__burger:hover {
         transition: 0.2s;
         background-color: #F9F9F9;
         border-radius: 5px;
@@ -103,29 +103,29 @@ margin-left: 3px;
 }
 
 @media screen and (max-width: 767px) {
-    .navigation__container-right {
+    .nav-container-right {
         max-width: 138px;
         padding: 2px 0 42px 62px;
     }
 
-    .navigation__login {
+    .nav-container-right__login {
         height: 26px;
         width: 54px;
         font-size: 10px;
         line-height: 16px;
     }
 
-    .navigation__register {
+    .nav-container-right__register {
         margin-right: 13px;
         font-size: 10px;
         line-height: 16px;
     }
 
-    .navigation__burger {
+    .nav-container-right__burger {
         margin: 3px 0 0 96px;
     }
 
-    .navigation__burger-img {
+    .nav-container-right__burger-img {
       width:34px;
       height: 40px;
       object-fit: fill;

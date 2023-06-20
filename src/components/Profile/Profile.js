@@ -131,15 +131,15 @@ const Profile = ({ submitUserInfo, setLoggedIn }) => {
                     />
                     {userPasswordDirty && <span className='profile__form-error'>{userPasswordError}</span>}
                 </div>
-                <button disabled={(userNameDirty || userEmailDirty || userPasswordDirty)} className={editProfile ? 'profile__form-btn' : 'profile__form-btn btn_none'} onClick={handleSubmit}>Сохранить</button>
+                <button disabled={(userNameDirty || userEmailDirty || userPasswordDirty)} className={editProfile ? 'profile__form-btn' : 'profile__form-btn profile__form-btn_none'} onClick={handleSubmit}>Сохранить</button>
             </form>
 
             <div className="profile__nav">
-                <button className={editProfile ? 'profile__nav-btn btn_none' : 'profile__nav-btn'} onClick={handleClickEditProfile} >Редактировать</button>
+                <button className={editProfile ? 'profile__nav-btn profile__form-btn_none' : 'profile__nav-btn'} onClick={handleClickEditProfile} >Редактировать</button>
                 <button className='profile__nav-btn profile__nav-btn_red' onClick={logout}>Выйти из аккаунта</button>
             </div>
         </section>
     );
 };
 
-export default Profile;
+export default Profile; 
