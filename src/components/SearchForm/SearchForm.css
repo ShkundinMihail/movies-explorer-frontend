@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 }
 
 .search-form__image {
@@ -34,6 +35,35 @@
   text-align: left;
 }
 
+
+
+.search-form__form-input-focus {
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid #2be080;
+  top: 55px;
+  right: 6.5%;
+  width: 90%;
+  animation: animation-input-focus 0.3s linear;
+}
+
+.search-form__form-input-blur{
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid #2be080;
+  top: 55px;
+  right: 6.5%;
+  animation: animation-input-blur 0.3s linear;
+}
+
+.search-form__form-input-focus_top {
+  top: 15px;
+}
+
+.search-form__form-input-blur_top {
+  top: 15px;
+}
+
 .search-form__button {
   background: transparent;
   border: none;
@@ -49,7 +79,7 @@
 
 .search-form__button:hover {
   transition: 0.2s;
-  filter: drop-shadow(0px 4px 4px rgba(11, 183, 68, 0.25)); 
+  filter: drop-shadow(0px 4px 4px rgba(11, 183, 68, 0.25));
 }
 
 .search-form__dividing-line {
@@ -198,5 +228,66 @@
     font-size: 11px;
     line-height: 18px;
     padding: 0 0 0 14px;
+  }
+  .search-form__form-input-focus{
+    width:75%;
+    right: 18.5%;
+    animation: animation-input-focus320 0.3s linear;
+  }
+  .search-form__form-input-blur{
+
+    right: 18.5%;
+    animation: animation-input-blur320 0.3s linear;
+  }
+  
+  @keyframes animation-input-focus320 {
+    0% {
+      width: 0;
+      left: 50%;
+      right: 50%;
+    }
+  
+    100% {
+      width: 75%;
+      left: 30px;
+    }
+  }
+  @keyframes animation-input-blur320 {
+    0% {
+      width: 75%;
+      left: 30px;
+    }
+  
+    100% {
+      width: 0;
+      left: 50%;
+      right: 50%;
+    }
+  }
+}
+
+@keyframes animation-input-blur {
+  0% {
+    width: 90%;
+    left: 30px;
+  }
+
+  100% {
+    width: 0;
+    left: 50%;
+    right: 50%;
+  }
+}
+
+@keyframes animation-input-focus {
+  0% {
+    width: 0;
+    left: 50%;
+    right: 50%;
+  }
+
+  100% {
+    width: 90%;
+    left: 30px;
   }
 }

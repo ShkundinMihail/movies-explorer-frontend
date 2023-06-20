@@ -32,13 +32,13 @@ const Movies = ({ filmdb }) => {
     }, [windowWidth]);
 
     return (
-        <section className='movies'>
+        <div className='movies'>
             <SearchForm />
             {preloader && < Circles type="ThreeDots" color="#2BE080" height={120} width={120} />}
             {preloader && <Preloader />}
             <MoviesCardList numberFilms={numberFilms} filmdb={filmdb} />
             <button className='movies__button-more' onClick={moreFilms}>Ещё</button>
-        </section>
+        </div>
     );
 };
 

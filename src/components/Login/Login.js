@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
-import logo from '../../images/logo.png'
+import logo from '../../images/logo.svg'
 import { re } from '../../utils/constants'
 
 const Login = ({ submitUserInfo, setLoggedIn }) => {
@@ -51,7 +51,7 @@ const Login = ({ submitUserInfo, setLoggedIn }) => {
     };
     return (
         <section className='login'>
-            <Link to='/' className='login__logo'><img className='register__logo-img' src={logo} alt='лого' /></Link>
+            <Link to='/' className='login__logo'><img className='login__logo-img' src={logo} alt='лого' /></Link>
             <h5 className='login__title'>Рады видеть!</h5>
             <form className='login__form'>
                 <div className='login__form-container'>
