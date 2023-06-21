@@ -1,9 +1,9 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import './MoviesCard.css';
-import addFavorites from '../../images/save9.png';
-import addFavoritesActive from '../../images/save9d.png';
-import deleteCard from '../../images/deleteCard.png';
+import addFavorites from '../../images/save9.svg';
+import addFavoritesActive from '../../images/save9d.svg';
+import deleteCard from '../../images/deleteCard.svg';
 
 const MoviesCard = ({ image, title, time }) => {
     const [addFavoritesState, setAddFavoritesState] = React.useState(addFavorites);
@@ -28,21 +28,21 @@ const MoviesCard = ({ image, title, time }) => {
     };
 
     return (
-        <article className="movies-card">
+        <div className="movies-card">
             <div className="movies-card__container-info">
                 <div className="movies-card__container-text">
-                    <h3 className="movie-card__title">{title}</h3>
-                    <p className="movie-card__time">{toHoursAndMinutes(time)}</p>
+                    <h3 className="movies-card__title">{title}</h3>
+                    <p className="movies-card__time">{toHoursAndMinutes(time)}</p>
                 </div>
-                <button className="movie-card__button"
+                <button className="movies-card__button"
                     onClick={location.pathname === '/movies' ? addFavoritesHandler : undefined}
                 >
-                    <img className="movie-card__button-image"
+                    <img className="movies-card__button-image"
                         src={location.pathname === '/movies' ? addFavoritesState : deleteCard} alt='button card' />
                 </button>
             </div>
-            <img className="movie-card__image" src={image} alt={title} />
-        </article>
+            <img className="movies-card__image" src={image} alt={title} />
+        </div>
     );
 };
 

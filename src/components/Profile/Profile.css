@@ -82,8 +82,8 @@
 
 .profile__form-value:focus {
     outline: none;
-    /* filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)); */
-    /* text-align: left; */
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)); 
+    text-align: left;
 }
 
 .profile__form-error {
@@ -161,7 +161,7 @@
     color: var(--color-button)
 }
 
-.btn_none {
+.profile__form-btn_none {
     cursor: default;
     background: transparent;
     border: none !important;

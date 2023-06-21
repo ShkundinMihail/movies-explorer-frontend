@@ -7,7 +7,7 @@ import MoviesCard from '../MoviesCard/MoviesCard.js';
 const MoviesCardList = ({ numberFilms, filmdb }) => {
 
     return (
-        <section className="movies-card-list">
+        <div className="movies-card-list">
             {filmdb.slice(0, numberFilms).map(item => (
                 <MoviesCard
                     time={item.duration}
@@ -17,7 +17,7 @@ const MoviesCardList = ({ numberFilms, filmdb }) => {
                 />
             ))
             }
-        </section>
+        </div>
     )
 };
 
