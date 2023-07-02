@@ -1,17 +1,29 @@
 import React from 'react';
-import useResize from 'use-resize';
 import './Movies.css';
 import SearchForm from '../SearchForm/SearchForm.js';
-import { Circles } from 'react-loader-spinner';
 import Preloader from '../Preloader/Preloader.js';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
+import { getMovies } from '../../utils/MoviesApi';
+import { CYRILLIC_REGEX, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE } from '../../utils/constants';
 
-const Movies = ({ filmdb }) => {
-    const windowWidth = useResize().width;
-    const preloader = false;
-    const [numberFilms, setNumberFilms] = React.useState(0);
+const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm }) => {
+    const [searchText, setSearchText] = React.useState('');
+    const [infoText, setInfoText] = React.useState('');
+    const [searchResult, setSearchResult] = React.useState([]);
+console.log(shortFilmsCheckbox)
+    React.useEffect(() => {
+        setInfoText('Введите запрос');
+        if (FILMS_FROM_LOCAL_STORAGE) {
+            setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
+        }
+        if (SEARCH_TEXT_FROM_LOCAL_STORAGE) {
+            setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
+        }
+    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        , []);
 
-    const moreFilms = () => {
+    const handleMoreFilms = () => {
         if (windowWidth >= 1280) {
             setNumberFilms(numberFilms + 3)
         } else if (windowWidth > 767 && windowWidth < 1280) {
@@ -19,25 +31,61 @@ const Movies = ({ filmdb }) => {
         } else {
             setNumberFilms(numberFilms + 1)
         }
-    }
+    };
 
-    React.useEffect(() => {
-        if (windowWidth >= 1280) {
-            setNumberFilms(12)
-        } else if (windowWidth > 767 && windowWidth < 1280) {
-            setNumberFilms(8)
+    const moreFilmsButtonVisible = () => {
+        if (searchResult.length === 0 || (searchResult.length <= 12 && windowWidth >= 1280) || (searchResult.length <= 8 && windowWidth > 767 && windowWidth < 1280) || (searchResult.length <= 5 && windowWidth < 767) || (searchResult.length <= numberFilms)) {
+            return 'movies__button-more movies__button-more_hidden'
         } else {
-            setNumberFilms(5)
+            return 'movies__button-more'
         }
-    }, [windowWidth]);
+    };
 
+    const handleFilms = () => {
+        setPreloader(true);
+        localStorage.setItem('searchText', searchText);
+        let data
+        getMovies()
+            .then((res) => {
+                if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
+                    data = res.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase()));
+                } else {
+                    data = res.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase()));
+                }
+                if (shortFilmsCheckbox) {
+                    data = data.filter(({ duration }) => duration <= 40)
+                }
+                if (data.length === 0) {
+                    setSearchResult([]);
+                    localStorage.setItem('movies', []);
+                    setInfoText('Ничего не найдено');
+                } else {
+                    localStorage.setItem('movies', JSON.stringify(data));
+                    setSearchResult(data);
+                };
+            })
+            .catch(() => {
+                localStorage.setItem('movies', []);
+                setSearchResult([]);
+                setInfoText('Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
+            })
+            .finally(() => {
+                setPreloader(false);
+            })
+    };
+    console.log(shortFilmsCheckbox)
     return (
         <div className='movies'>
-            <SearchForm />
-            {preloader && < Circles type="ThreeDots" color="#2BE080" height={120} width={120} />}
-            {preloader && <Preloader />}
-            <MoviesCardList numberFilms={numberFilms} filmdb={filmdb} />
-            <button className='movies__button-more' onClick={moreFilms}>Ещё</button>
+            <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
+            {preloader ? <Preloader /> :
+                <>
+                    {(searchResult === null || searchResult.length === 0) ? <p className='movies__info-text'>{infoText}</p> :
+                        <>
+                            <MoviesCardList numberFilms={numberFilms} movies={searchResult} addFilmToUser={addFilmToUser} savedFilms={savedFilms} setSavedFilms={setSavedFilms} deleteUsersFilm={deleteUsersFilm}/>
+                            <button className={moreFilmsButtonVisible()} onClick={handleMoreFilms}>Ещё</button>
+                        </>}
+
+                </>}
         </div>
     );
 };

@@ -1,12 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
-import { re } from '../../utils/constants';
+import { REGEX_EMAIL } from '../../utils/constants';
 
-const Profile = ({ submitUserInfo, setLoggedIn }) => {
+const Profile = ({ handleUserUpdate, handleLogout }) => {
     const context = React.useContext(CurrentUserContext);
-    const navigate = useNavigate();
     const [editProfile, setEditProfile] = React.useState(false);
     const [userName, setUserName] = React.useState('');
     const [userEmail, setUserEmail] = React.useState('');
@@ -45,7 +43,7 @@ const Profile = ({ submitUserInfo, setLoggedIn }) => {
         } else if (e.target.value.length > 40 || e.target.value.length < 6) {
             setUserEmailError('Email должно быть от 6 до 40 символов');
             setUserEmailDirty(true);
-        } else if (!re.test(String(e.target.value).toLowerCase())) {
+        } else if (!REGEX_EMAIL.test(String(e.target.value).toLowerCase())) {
             setUserEmailError('Некорректный email');
             setUserEmailDirty(true);
         } else {
@@ -58,8 +56,8 @@ const Profile = ({ submitUserInfo, setLoggedIn }) => {
         if (e.target.value.length === 0) {
             setUserPasswordError('Поле не должно быть пустым');
             setUserPasswordDirty(true);
-        } else if (e.target.value.length > 40 || e.target.value.length < 6) {
-            setUserPasswordError('Пароль должно быть от 6 до 40 символов');
+        } else if (e.target.value.length > 40 || e.target.value.length < 8) {
+            setUserPasswordError('Пароль должно быть от 8 до 40 символов');
             setUserPasswordDirty(true);
         } else {
             setUserPasswordError('');
@@ -74,17 +72,12 @@ const Profile = ({ submitUserInfo, setLoggedIn }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        submitUserInfo({
+        handleUserUpdate({
             name: userName,
             email: userEmail,
             password: userPassword
         });
         setEditProfile(false);
-    };
-
-    const logout = () => {
-        setLoggedIn(false);
-        navigate('/', { replace: true });
     };
 
     return (
@@ -136,7 +129,7 @@ const Profile = ({ submitUserInfo, setLoggedIn }) => {
 
             <div className="profile__nav">
                 <button className={editProfile ? 'profile__nav-btn profile__form-btn_none' : 'profile__nav-btn'} onClick={handleClickEditProfile} >Редактировать</button>
-                <button className='profile__nav-btn profile__nav-btn_red' onClick={logout}>Выйти из аккаунта</button>
+                <button className='profile__nav-btn profile__nav-btn_red' onClick={handleLogout}>Выйти из аккаунта</button>
             </div>
         </section>
     );

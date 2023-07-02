@@ -3,9 +3,18 @@ import './SearchForm.css';
 import searchIcon from '../../images/iconSearch.svg';
 import searchFormButton from '../../images/findsearch.svg';
 
-const SearchForm = () => {
+const SearchForm = ({ setSearchText, searchText, handleFilms, shortFilmsCheckbox, setShortFilmsCheckbox }) => {
     const [blurInput, setBlurInput] = React.useState(false);
     const [focusInput, setFocusInput] = React.useState(false);
+    
+    const handleShortChange = () => {
+        setShortFilmsCheckbox(!shortFilmsCheckbox);
+    };
+
+    const changeInput = (e) => {
+        setSearchText(e.target.value);
+    };
+
     return (
         <div className="search-form">
             <form className="search-form__form">
@@ -17,12 +26,22 @@ const SearchForm = () => {
                 <input
                     onFocus={() => { setBlurInput(false); setFocusInput(true) }}
                     onBlur={() => { setBlurInput(true) }}
+                    onChange={changeInput}
+                    maxLength='200'
                     className="search-form__input"
                     type="text"
                     placeholder="Фильм"
                     required
+                    value={searchText}
                 />
-                <button className="search-form__button" type="submit" onClick={null}>
+                <button
+                    className="search-form__button"
+                    type="submit"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handleFilms();
+                    }}
+                    disabled={searchText === ''}>
                     <img className="search-form__button-image" src={searchFormButton} alt="findsearch" />
                 </button>
             </form>
@@ -32,6 +51,9 @@ const SearchForm = () => {
                     <input
                         type="checkbox"
                         className="search-form__shorts-checkbox"
+                        value={shortFilmsCheckbox}
+                        checked={shortFilmsCheckbox}
+                        onChange={handleShortChange}
                     />
                     <span className="search-form__shorts-slider" />
                 </label>
