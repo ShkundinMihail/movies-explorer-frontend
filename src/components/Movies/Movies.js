@@ -4,24 +4,9 @@ import SearchForm from '../SearchForm/SearchForm.js';
 import Preloader from '../Preloader/Preloader.js';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { getMovies } from '../../utils/MoviesApi';
-import { CYRILLIC_REGEX, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE } from '../../utils/constants';
+import { CYRILLIC_REGEX } from '../../utils/constants';
 
-const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm }) => {
-    const [searchText, setSearchText] = React.useState('');
-    const [infoText, setInfoText] = React.useState('');
-    const [searchResult, setSearchResult] = React.useState([]);
-console.log(shortFilmsCheckbox)
-    React.useEffect(() => {
-        setInfoText('Введите запрос');
-        if (FILMS_FROM_LOCAL_STORAGE) {
-            setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
-        }
-        if (SEARCH_TEXT_FROM_LOCAL_STORAGE) {
-            setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
-        }
-    }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        , []);
+const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, searchText, setSearchText, infoText, setInfoText, searchResult, setSearchResult }) => {
 
     const handleMoreFilms = () => {
         if (windowWidth >= 1280) {
@@ -29,7 +14,8 @@ console.log(shortFilmsCheckbox)
         } else if (windowWidth > 767 && windowWidth < 1280) {
             setNumberFilms(numberFilms + 2)
         } else {
-            setNumberFilms(numberFilms + 1)
+            setNumberFilms(numberFilms + 1)//Если карточки уже были отображены на странице в блоке результатов, клик по чекбоксу «Короткометражки» приводит к повторной фильтрации результата.
+            
         }
     };
 
@@ -73,7 +59,7 @@ console.log(shortFilmsCheckbox)
                 setPreloader(false);
             })
     };
-    console.log(shortFilmsCheckbox)
+
     return (
         <div className='movies'>
             <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
@@ -81,7 +67,7 @@ console.log(shortFilmsCheckbox)
                 <>
                     {(searchResult === null || searchResult.length === 0) ? <p className='movies__info-text'>{infoText}</p> :
                         <>
-                            <MoviesCardList numberFilms={numberFilms} movies={searchResult} addFilmToUser={addFilmToUser} savedFilms={savedFilms} setSavedFilms={setSavedFilms} deleteUsersFilm={deleteUsersFilm}/>
+                            <MoviesCardList numberFilms={numberFilms} movies={searchResult} addFilmToUser={addFilmToUser} savedFilms={savedFilms} setSavedFilms={setSavedFilms} deleteUsersFilm={deleteUsersFilm} />
                             <button className={moreFilmsButtonVisible()} onClick={handleMoreFilms}>Ещё</button>
                         </>}
 

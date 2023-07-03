@@ -18,7 +18,7 @@ import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
 import { registerUser, loginUser, verificationUserToken, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE } from '../../utils/constants';
+import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE } from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
@@ -32,6 +32,9 @@ function App() {
     const [savedFilms, setSavedFilms] = React.useState([]);
     const [infoTextSavedMovies, setInfoTextSavedMovies] = React.useState('');
     const [preloader, setPreloader] = React.useState(false);
+    const [searchText, setSearchText] = React.useState('');
+    const [infoText, setInfoText] = React.useState('');
+    const [searchResult, setSearchResult] = React.useState([]);
     const { pathname } = useLocation();
     const windowWidth = useResize().width;
     const navigate = useNavigate();
@@ -42,23 +45,32 @@ function App() {
     });
 
     React.useEffect(() => {
-        checkToken();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        checkToken();// eslint-disable-next-line react-hooks/exhaustive-deps            
     }, []);
 
+    React.useEffect(() => { },
+        []);
+
     React.useEffect(() => {
-        if (loggedIn) {
-            handleUserInfo();
-            handleSavedFilms();
-            if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE) {
-                setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
-            }
+        handleSavedFilms()
+        if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE) {
+            setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
+        }
+        setInfoText('Введите запрос');
+        if (FILMS_FROM_LOCAL_STORAGE) {
+            setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
+        }
+
+        if (SEARCH_TEXT_FROM_LOCAL_STORAGE) {
+            setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
         }
     }, [loggedIn]);
+
     React.useEffect(() => {
         localStorage.setItem('checkboxShortFilms', JSON.stringify(shortFilmsCheckbox));
     },
         [shortFilmsCheckbox]);
+
     React.useEffect(() => {
         if (windowWidth >= 1280) {
             setNumberFilms(12)
@@ -68,14 +80,29 @@ function App() {
             setNumberFilms(5)
         }
     }, [windowWidth]);
+
     //userBlock////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleRegisterUser = ({ name, email, password }) => {
         setAnimation(true);
         registerUser({ name, email, password })
             .then(() => {
-                setInfoToolTipVisible(true)
-                setMessageText('Регистрация прошла успешно!')
-                navigate('/signin', { replace: true })
+                loginUser({ email, password })
+                    .then((res) => {
+                        localStorage.setItem('token', res.token);
+                        setLoggedIn(true);
+                        handleUserInfo();
+                        setInfoToolTipVisible(true)
+                        setMessageText('Регистрация прошла успешно!')
+                        navigate('/movies', { replace: true })
+                    })
+                    .catch((err) => {
+                        setInfoToolTipVisible(true)
+                        setMessageText(`${err}...Попробуйте еще раз...`);
+                    })
+                    .finally(() => {
+                        setAnimation(false)
+                        setTimeout(() => { setInfoToolTipVisible(false) }, 1500)
+                    })
             })
             .catch((err) => {
                 setInfoToolTipVisible(true)
@@ -93,6 +120,8 @@ function App() {
                 localStorage.setItem('token', res.token);
                 setLoggedIn(true);
                 setInfoToolTipVisible(true);
+                handleUserInfo();
+                handleSavedFilms();
                 setMessageText('Добро пожаловать!');
                 navigate('/movies', { replace: true });
             })
@@ -111,7 +140,6 @@ function App() {
             .then((res) => {
                 setInfoToolTipVisible(true);
                 setMessageText('Профиль успешно изменён!');
-                console.log(res);
                 setUserInfo({ name: res.name, email: res.email, password: '' });
             })
             .catch((err) => {
@@ -131,6 +159,8 @@ function App() {
                     if (res) {
                         setLoggedIn(true);
                         navigate('/movies', { replace: true });
+                        //  handleUserInfo();
+                        handleSavedFilms();
                     }
                 })
                 .catch((err) => {
@@ -159,11 +189,11 @@ function App() {
     };
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('movies');
-        localStorage.removeItem('searchText');
-        localStorage.removeItem('checkboxShortFilms');
         setLoggedIn(false);
         setUserInfo({ name: '', email: '', password: '' });
+        setSearchResult([]);
+        setSearchText('');
+        setShortFilmsCheckbox(false);
     };
     ///burger////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleOpenMenu = () => {
@@ -188,7 +218,7 @@ function App() {
             });
     };
     const addFilmToUser = ({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN }) => {
-        setPreloader(true);
+       // setPreloader(true);
         createUserMovies({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN })
             .then((res) => {
                 setSavedFilms([res.data, ...savedFilms]);
@@ -199,7 +229,7 @@ function App() {
                 setTimeout(() => { setInfoToolTipVisible(false) }, 3000);
             })
             .finally(() => {
-                setPreloader(false);
+              //  setPreloader(false);
             });
     };
 
@@ -241,7 +271,13 @@ function App() {
                             setPreloader={setPreloader}
                             savedFilms={savedFilms}
                             setSavedFilms={setSavedFilms}
-                            deleteUsersFilm={deleteUsersFilm}
+                            deleteUsersFilm={deleteUsersFilm} 
+                            infoText={infoText}
+                            setInfoText={setInfoText}
+                            searchResult={searchResult}
+                            setSearchResult={setSearchResult}
+                            searchText={searchText}
+                            setSearchText={setSearchText}
                         />} />
                     <Route path='/saved-movies' element={
                         <ProtectedRoute
@@ -257,7 +293,9 @@ function App() {
                             infoTextSavedMovies={infoTextSavedMovies}
                             setInfoTextSavedMovies={setInfoTextSavedMovies}
                             preloader={preloader}
-                            deleteUsersFilm={deleteUsersFilm} />} />
+                            deleteUsersFilm={deleteUsersFilm}
+                            searchText={searchText}
+                            setSearchText={setSearchText}/>} />
                     <Route path='/profile' element={
                         <ProtectedRoute element={Profile}
                             handleUserUpdate={handleUserUpdate}
