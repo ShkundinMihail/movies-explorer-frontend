@@ -44,7 +44,7 @@ export const verificationUserToken = (token) => {
 export const getUserInfo = () => {
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
-        headers: HEADERS,
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json'} ,
     })
         .then((res) => { return handleResponse(res) })
 };
@@ -61,7 +61,7 @@ export const updateUserInfo = ({ name, email, password }) => {
 export const getUserMovies = () => {
     return fetch(`${BASE_URL}/movies`, {
         method: 'GET',
-        headers: HEADERS,
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json'} ,
     })
         .then((res) => { return handleResponse(res) })
 };

@@ -45,24 +45,28 @@ function App() {
     });
 
     React.useEffect(() => {
-        checkToken();// eslint-disable-next-line react-hooks/exhaustive-deps            
-    }, []);
-
-    React.useEffect(() => { },
-        []);
-
-    React.useEffect(() => {
-        handleSavedFilms()
         if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE) {
             setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
-        }
+        };
         setInfoText('Введите запрос');
-        if (FILMS_FROM_LOCAL_STORAGE) {
+        if (FILMS_FROM_LOCAL_STORAGE === (null || undefined || false)) {
+            setSearchResult([]);
+        } else {
             setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
-        }
-
-        if (SEARCH_TEXT_FROM_LOCAL_STORAGE) {
+        };
+        if (SEARCH_TEXT_FROM_LOCAL_STORAGE === (null || undefined || false)) {
+            setSearchText('');
+        } else {
             setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
+        };
+        checkToken();
+        // eslint-disable-next-line react-hooks/exhaustive-deps            
+    }, []);
+
+    React.useEffect(() => {
+        if (loggedIn) {
+            handleSavedFilms();
+            handleUserInfo();
         }
     }, [loggedIn]);
 
@@ -90,7 +94,7 @@ function App() {
                     .then((res) => {
                         localStorage.setItem('token', res.token);
                         setLoggedIn(true);
-                        handleUserInfo();
+                        // handleUserInfo();
                         setInfoToolTipVisible(true)
                         setMessageText('Регистрация прошла успешно!')
                         navigate('/movies', { replace: true })
@@ -120,8 +124,8 @@ function App() {
                 localStorage.setItem('token', res.token);
                 setLoggedIn(true);
                 setInfoToolTipVisible(true);
-                handleUserInfo();
-                handleSavedFilms();
+                // handleUserInfo();
+                // handleSavedFilms();
                 setMessageText('Добро пожаловать!');
                 navigate('/movies', { replace: true });
             })
@@ -159,8 +163,8 @@ function App() {
                     if (res) {
                         setLoggedIn(true);
                         navigate('/movies', { replace: true });
-                        //  handleUserInfo();
-                        handleSavedFilms();
+                        // handleUserInfo();
+                        // handleSavedFilms();
                     }
                 })
                 .catch((err) => {
@@ -218,7 +222,7 @@ function App() {
             });
     };
     const addFilmToUser = ({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN }) => {
-       // setPreloader(true);
+        // setPreloader(true);
         createUserMovies({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN })
             .then((res) => {
                 setSavedFilms([res.data, ...savedFilms]);
@@ -229,7 +233,7 @@ function App() {
                 setTimeout(() => { setInfoToolTipVisible(false) }, 3000);
             })
             .finally(() => {
-              //  setPreloader(false);
+                //  setPreloader(false);
             });
     };
 
@@ -271,7 +275,7 @@ function App() {
                             setPreloader={setPreloader}
                             savedFilms={savedFilms}
                             setSavedFilms={setSavedFilms}
-                            deleteUsersFilm={deleteUsersFilm} 
+                            deleteUsersFilm={deleteUsersFilm}
                             infoText={infoText}
                             setInfoText={setInfoText}
                             searchResult={searchResult}
@@ -295,7 +299,7 @@ function App() {
                             preloader={preloader}
                             deleteUsersFilm={deleteUsersFilm}
                             searchText={searchText}
-                            setSearchText={setSearchText}/>} />
+                            setSearchText={setSearchText} />} />
                     <Route path='/profile' element={
                         <ProtectedRoute element={Profile}
                             handleUserUpdate={handleUserUpdate}
