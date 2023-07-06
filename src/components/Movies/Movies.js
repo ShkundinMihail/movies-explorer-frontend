@@ -69,6 +69,7 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
             setSearchResult(data);
         };
     };
+    
     return (
         <div className='movies'>
             <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
