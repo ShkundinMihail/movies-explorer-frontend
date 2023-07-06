@@ -30,22 +30,32 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
     const handleFilms = () => {
         setPreloader(true);
         localStorage.setItem('searchText', searchText);
-        let data
         if (!ALL_MOVIES_FROM_LOCAL_STORAGE) {
             getMovies()
                 .then((res) => {
                     localStorage.setItem('allMovies', JSON.stringify(res));
+                    movieSearchLogic(res);
                 })
                 .catch((err) => {
                     localStorage.setItem('movies', []);
                     setSearchResult([]);
                     setInfoText(`Во время запроса произошла ошибка ${err.message}. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз`);
                 })
-        }
-        if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
-            data = JSON.parse(ALL_MOVIES_FROM_LOCAL_STORAGE).filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase()));
+                .finally(() => {
+                    setPreloader(false);
+                });
         } else {
-            data = JSON.parse(ALL_MOVIES_FROM_LOCAL_STORAGE).filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase()));
+            const allMovies = JSON.parse(ALL_MOVIES_FROM_LOCAL_STORAGE);
+            movieSearchLogic(allMovies);
+            setPreloader(false);
+        }
+    };
+    const movieSearchLogic = (object) => {
+        let data
+        if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
+            data = object.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase()));
+        } else {
+            data = object.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase()));
         }
         if (shortFilmsCheckbox) {
             data = data.filter(({ duration }) => duration <= DURATION_SHORT_FILM)
@@ -58,9 +68,7 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
             localStorage.setItem('movies', JSON.stringify(data));
             setSearchResult(data);
         };
-        setPreloader(false);
     };
-
     return (
         <div className='movies'>
             <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />

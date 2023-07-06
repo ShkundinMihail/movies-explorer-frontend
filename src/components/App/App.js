@@ -63,7 +63,7 @@ function App() {
             handleSavedFilms();
             handleUserInfo();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     React.useEffect(() => {
@@ -117,10 +117,10 @@ function App() {
         loginUser({ email, password })
             .then((res) => {
                 localStorage.setItem('token', res.token);
-                setLoggedIn(true);
                 setInfoToolTipVisible(true);
                 setMessageText('Добро пожаловать!');
                 navigate('/movies', { replace: true });
+                setLoggedIn(true);
             })
             .catch((err) => {
                 setInfoToolTipVisible(true);
@@ -171,11 +171,16 @@ function App() {
     };
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setLoggedIn(false);
+        localStorage.removeItem('movies');
+        localStorage.removeItem('allMovies');
+        localStorage.removeItem('checkboxShortFilms');
+        localStorage.removeItem('searchText');
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
         setSearchText('');
         setShortFilmsCheckbox(false);
+        setLoggedIn(false);
+        navigate('/', {replace: true});
     };
     ///burger////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleOpenMenu = () => {
