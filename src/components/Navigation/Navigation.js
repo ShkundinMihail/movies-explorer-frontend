@@ -4,12 +4,13 @@ import burger from '../../images/icon__COLOR_icon-main.svg'
 import { Link } from 'react-router-dom';
 import AccountButton from '../AccountButton/AccountButton';
 import useResize from 'use-resize';
+import { SCREEN_WIDTH_1280 } from '../../utils/constants'
 
 const Navigation = ({ handleOpenMenu, loggedIn }) => {
     const windowWidth = useResize().width;
 
     return (
-        <> {(loggedIn && windowWidth >= 1280) ? <div className='nav-container-left'>
+        <> {(loggedIn && windowWidth >= SCREEN_WIDTH_1280) ? <div className='nav-container-left'>
             <>
                 <Link to='/movies' className='nav-container-left__navlink nav-container-left__navlink_weight'>Фильмы</Link>
                 <Link to='/saved-movies' className='nav-container-left__navlink nav-container-left__navlink_position'>Сохранённые фильмы</Link>
@@ -18,7 +19,7 @@ const Navigation = ({ handleOpenMenu, loggedIn }) => {
             <div className='nav-container-right'>
                 {loggedIn ?
                     <>
-                        {(windowWidth >= 1280) ? <AccountButton/> :
+                        {(windowWidth >= SCREEN_WIDTH_1280) ? <AccountButton /> :
                             <button className='nav-container-right__burger' onClick={handleOpenMenu}><img className='nav-container-right__burger-img' src={burger} alt='burger' /></button>}
                     </>
                     :

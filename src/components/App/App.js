@@ -18,11 +18,11 @@ import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
 import { registerUser, loginUser, verificationUserToken, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE } from '../../utils/constants';
+import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768} from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
-    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [loggedIn, setLoggedIn] = React.useState(TOKEN ? true : false);
     const [openMenu, setOpenMenu] = React.useState(false);
     const [animation, setAnimation] = React.useState(false);
     const [infoToolTipVisible, setInfoToolTipVisible] = React.useState(false);
@@ -44,26 +44,27 @@ function App() {
         password: '',
     });
 
+    // React.useEffect(() => {
+    //     if (!loggedIn) {
+    //         checkToken();
+    //     }
+    // }, []);
+
     React.useEffect(() => {
-        if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE) {
+        if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE && loggedIn) {
             setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
         };
         setInfoText('Введите запрос');
-        if (FILMS_FROM_LOCAL_STORAGE === (null || undefined || false)) {
+        if (FILMS_FROM_LOCAL_STORAGE === (null || undefined || false) && loggedIn) {
             setSearchResult([]);
         } else {
             setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
         };
-        if (SEARCH_TEXT_FROM_LOCAL_STORAGE === (null || undefined || false)) {
+        if (SEARCH_TEXT_FROM_LOCAL_STORAGE === (null || undefined || false) && loggedIn) {
             setSearchText('');
         } else {
             setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
         };
-        checkToken();
-        // eslint-disable-next-line react-hooks/exhaustive-deps            
-    }, []);
-
-    React.useEffect(() => {
         if (loggedIn) {
             handleSavedFilms();
             handleUserInfo();
@@ -76,9 +77,9 @@ function App() {
         [shortFilmsCheckbox]);
 
     React.useEffect(() => {
-        if (windowWidth >= 1280) {
+        if (windowWidth >= SCREEN_WIDTH_1280) {
             setNumberFilms(12)
-        } else if (windowWidth > 767 && windowWidth < 1280) {
+        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
             setNumberFilms(8)
         } else {
             setNumberFilms(5)
@@ -94,7 +95,6 @@ function App() {
                     .then((res) => {
                         localStorage.setItem('token', res.token);
                         setLoggedIn(true);
-                        // handleUserInfo();
                         setInfoToolTipVisible(true)
                         setMessageText('Регистрация прошла успешно!')
                         navigate('/movies', { replace: true })
@@ -124,8 +124,6 @@ function App() {
                 localStorage.setItem('token', res.token);
                 setLoggedIn(true);
                 setInfoToolTipVisible(true);
-                // handleUserInfo();
-                // handleSavedFilms();
                 setMessageText('Добро пожаловать!');
                 navigate('/movies', { replace: true });
             })
@@ -162,22 +160,18 @@ function App() {
                 .then((res) => {
                     if (res) {
                         setLoggedIn(true);
-                        navigate('/movies', { replace: true });
-                        // handleUserInfo();
-                        // handleSavedFilms();
+                        navigate('/movies', { replace: false });
                     }
                 })
                 .catch((err) => {
                     setInfoToolTipVisible(true);
                     setMessageText(`Ошибка входа. Авторизуйтесь или пройдите регистрацию: ${err}`);
-                    navigate('/', { replace: true });
+                    navigate('/', { replace: false });
                 })
                 .finally(() => {
                     setAnimation(false);
                     setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
                 });
-        } else {
-            navigate('/', { replace: true });
         }
     };
     const handleUserInfo = () => {
@@ -193,6 +187,7 @@ function App() {
     };
     const handleLogout = () => {
         localStorage.removeItem('token');
+        sessionStorage.removeItem('timeLastTokenCheck');
         setLoggedIn(false);
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
@@ -222,7 +217,7 @@ function App() {
             });
     };
     const addFilmToUser = ({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN }) => {
-        // setPreloader(true);
+        setPreloader(true);
         createUserMovies({ country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN })
             .then((res) => {
                 setSavedFilms([res.data, ...savedFilms]);
@@ -233,7 +228,7 @@ function App() {
                 setTimeout(() => { setInfoToolTipVisible(false) }, 3000);
             })
             .finally(() => {
-                //  setPreloader(false);
+                setPreloader(false);
             });
     };
 
@@ -305,7 +300,7 @@ function App() {
                             handleUserUpdate={handleUserUpdate}
                             handleLogout={handleLogout}
                             loggedIn={loggedIn} />} />
-                    <Route path='*' element={<NotFoundPage />} />
+                    <Route path='*' element={<NotFoundPage navigate={navigate} />} />
                 </Routes>
                 {(pathname === '/movies' || pathname === '/saved-movies' || pathname === '/') && <Footer />}
                 <PopupMenu openMenu={openMenu} handleCloseMenu={handleCloseMenu} />

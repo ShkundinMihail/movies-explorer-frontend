@@ -4,14 +4,14 @@ import SearchForm from '../SearchForm/SearchForm.js';
 import Preloader from '../Preloader/Preloader.js';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { getMovies } from '../../utils/MoviesApi';
-import { CYRILLIC_REGEX } from '../../utils/constants';
+import { CYRILLIC_REGEX, SCREEN_WIDTH_1280,SCREEN_WIDTH_768, DURATION_SHORT_FILM } from '../../utils/constants';
 
 const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, searchText, setSearchText, infoText, setInfoText, searchResult, setSearchResult }) => {
 
     const handleMoreFilms = () => {
-        if (windowWidth >= 1280) {
+        if (windowWidth >= SCREEN_WIDTH_1280) {
             setNumberFilms(numberFilms + 3)
-        } else if (windowWidth > 767 && windowWidth < 1280) {
+        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
             setNumberFilms(numberFilms + 2)
         } else {
             setNumberFilms(numberFilms + 1)//Если карточки уже были отображены на странице в блоке результатов, клик по чекбоксу «Короткометражки» приводит к повторной фильтрации результата.
@@ -20,7 +20,7 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
     };
 
     const moreFilmsButtonVisible = () => {
-        if (searchResult.length === 0 || (searchResult.length <= 12 && windowWidth >= 1280) || (searchResult.length <= 8 && windowWidth > 767 && windowWidth < 1280) || (searchResult.length <= 5 && windowWidth < 767) || (searchResult.length <= numberFilms)) {
+        if (searchResult.length === 0 || (searchResult.length <= 12 && windowWidth >= SCREEN_WIDTH_1280) || (searchResult.length <= 8 && windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) || (searchResult.length <= 5 && windowWidth < SCREEN_WIDTH_768) || (searchResult.length <= numberFilms)) {
             return 'movies__button-more movies__button-more_hidden'
         } else {
             return 'movies__button-more'
@@ -39,7 +39,7 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
                     data = res.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase()));
                 }
                 if (shortFilmsCheckbox) {
-                    data = data.filter(({ duration }) => duration <= 40)
+                    data = data.filter(({ duration }) => duration <= DURATION_SHORT_FILM)
                 }
                 if (data.length === 0) {
                     setSearchResult([]);

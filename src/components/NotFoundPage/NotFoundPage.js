@@ -1,15 +1,15 @@
 import React from "react";
 import './NotFoundPage.css';
-import { Link } from "react-router-dom";
 
-const NotFoundPage = () => {
-return (
-    <section className="not-found-page">
-        <h5 className="not-found-page__title">404</h5>
-        <p className="not-found-page__text">Страница не найдена</p>
-        <Link to="/" className="not-found-page__link">Назад</Link>
-    </section>
-)
+
+const NotFoundPage = ({ navigate }) => {
+    return (
+        <section className="not-found-page">
+            <h5 className="not-found-page__title">404</h5>
+            <p className="not-found-page__text">Страница не найдена</p>
+            <button onClick={() => { navigate(-1) }} className="not-found-page__button">Назад</button>
+        </section>
+    )
 };
 
 export default NotFoundPage;
