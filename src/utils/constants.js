@@ -12,6 +12,3 @@ export const TOKEN = localStorage.getItem('token');
 export const SCREEN_WIDTH_1280 = 1280;
 export const SCREEN_WIDTH_768 = 768;
 export const DURATION_SHORT_FILM = 40;
-export const UNIX_TIMESTAMP = new Date().getTime();
-export const ONE_HOUR_IN_MILLISECONDS = 3600000;
-export const TIME_LAST_TOKEN_CHECK = Number(sessionStorage.getItem('timeLastTokenCheck'));

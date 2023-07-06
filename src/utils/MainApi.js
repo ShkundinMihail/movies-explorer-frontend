@@ -30,17 +30,6 @@ export const loginUser = ({ email, password }) => {
         .then((res) => { return handleResponse(res) })
 };
 
-export const verificationUserToken = (token) => {
-    return fetch(`${BASE_URL}/users/me`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    })
-        .then(res => { return handleResponse(res) });
-};
-
 export const getUserInfo = () => {
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',

@@ -17,8 +17,8 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage.js';
 import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
-import { registerUser, loginUser, verificationUserToken, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768} from '../../utils/constants';
+import { registerUser, loginUser, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
+import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768 } from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
@@ -44,12 +44,6 @@ function App() {
         password: '',
     });
 
-    // React.useEffect(() => {
-    //     if (!loggedIn) {
-    //         checkToken();
-    //     }
-    // }, []);
-
     React.useEffect(() => {
         if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE && loggedIn) {
             setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
@@ -69,7 +63,8 @@ function App() {
             handleSavedFilms();
             handleUserInfo();
         }
-    }, [loggedIn]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     React.useEffect(() => {
         localStorage.setItem('checkboxShortFilms', JSON.stringify(shortFilmsCheckbox));
@@ -153,28 +148,9 @@ function App() {
                 setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
             })
     };
-    const checkToken = () => {
-        if (TOKEN) {
-            setAnimation(true);
-            verificationUserToken(TOKEN)
-                .then((res) => {
-                    if (res) {
-                        setLoggedIn(true);
-                        navigate('/movies', { replace: false });
-                    }
-                })
-                .catch((err) => {
-                    setInfoToolTipVisible(true);
-                    setMessageText(`Ошибка входа. Авторизуйтесь или пройдите регистрацию: ${err}`);
-                    navigate('/', { replace: false });
-                })
-                .finally(() => {
-                    setAnimation(false);
-                    setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
-                });
-        }
-    };
+
     const handleUserInfo = () => {
+        setAnimation(true);
         getUserInfo()
             .then((res) => {
                 setUserInfo({
@@ -183,11 +159,18 @@ function App() {
                     password: ''
                 })
             })
-            .catch((err) => { return err })
+            .catch((err) => {
+                setInfoToolTipVisible(true);
+                setMessageText(`Ошибка входа. Авторизуйтесь или пройдите регистрацию: ${err}`);
+                setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
+                handleLogout();
+            })
+            .finally(() => {
+                setAnimation(false);
+            });
     };
     const handleLogout = () => {
         localStorage.removeItem('token');
-        sessionStorage.removeItem('timeLastTokenCheck');
         setLoggedIn(false);
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
