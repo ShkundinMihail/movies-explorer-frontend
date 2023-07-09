@@ -11,6 +11,7 @@ const SavedMovies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, n
     React.useEffect(() => {
         setInfoTextSavedMovies('У вас нет сохранненных фильмов');
         setShortsSavedFilms(savedFilms.filter(({ duration }) => duration <= DURATION_SHORT_FILM))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleMoreFilms = () => {

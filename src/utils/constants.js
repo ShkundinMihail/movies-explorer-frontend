@@ -10,6 +10,7 @@ export const STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE = localStorage.getIt
 export const SEARCH_TEXT_FROM_LOCAL_STORAGE = localStorage.getItem('searchText');
 export const TOKEN = localStorage.getItem('token');
 export const ALL_MOVIES_FROM_LOCAL_STORAGE = localStorage.getItem('allMovies');
+export const FIRST_VISIT_SITE = sessionStorage.getItem('entrance');
 export const SCREEN_WIDTH_1280 = 1280;
 export const SCREEN_WIDTH_768 = 768;
 export const DURATION_SHORT_FILM = 40;

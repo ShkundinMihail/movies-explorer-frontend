@@ -18,7 +18,7 @@ import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
 import { registerUser, loginUser, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768 } from '../../utils/constants';
+import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, FIRST_VISIT_SITE } from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
@@ -43,8 +43,10 @@ function App() {
         email: '',
         password: '',
     });
-
     React.useEffect(() => {
+        if (loggedIn && !FIRST_VISIT_SITE && (pathname === 'movies' || pathname === '/')) {
+            navigate('/movies', { replace: true });
+        }
         if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE && loggedIn) {
             setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
         };
@@ -62,6 +64,7 @@ function App() {
         if (loggedIn) {
             handleSavedFilms();
             handleUserInfo();
+            sessionStorage.setItem('entrance', true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -161,6 +164,7 @@ function App() {
             })
             .catch((err) => {
                 setInfoToolTipVisible(true);
+                localStorage.removeItem('token');
                 setMessageText(`Ошибка входа. Авторизуйтесь или пройдите регистрацию: ${err}`);
                 setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
                 handleLogout();
@@ -175,12 +179,13 @@ function App() {
         localStorage.removeItem('allMovies');
         localStorage.removeItem('checkboxShortFilms');
         localStorage.removeItem('searchText');
+        sessionStorage.removeItem('entrance');
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
         setSearchText('');
         setShortFilmsCheckbox(false);
         setLoggedIn(false);
-        navigate('/', {replace: true});
+        navigate('/', { replace: true });
     };
     ///burger////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleOpenMenu = () => {
@@ -241,9 +246,6 @@ function App() {
             <div className='app'>
                 {(pathname === '/movies' || pathname === '/saved-movies' || pathname === '/' || pathname === '/profile') && <Header handleOpenMenu={handleOpenMenu} loggedIn={loggedIn} />}
                 <Routes>
-                    <Route path='/' element={<Main />} />
-                    <Route path='/signup' element={<Register handleRegisterUser={handleRegisterUser} />} />
-                    <Route path='/signin' element={<Login handleLoginUser={handleLoginUser} />} />
                     <Route path='/movies' element={
                         <ProtectedRoute
                             element={Movies}
@@ -288,6 +290,9 @@ function App() {
                             handleUserUpdate={handleUserUpdate}
                             handleLogout={handleLogout}
                             loggedIn={loggedIn} />} />
+                    <Route path='/' element={<Main />} />
+                    {!loggedIn && <Route path='/signup' element={<Register handleRegisterUser={handleRegisterUser} />} />}
+                    {!loggedIn && <Route path='/signin' element={<Login handleLoginUser={handleLoginUser} />} />}
                     <Route path='*' element={<NotFoundPage navigate={navigate} />} />
                 </Routes>
                 {(pathname === '/movies' || pathname === '/saved-movies' || pathname === '/') && <Footer />}
