@@ -5,14 +5,26 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import Preloader from '../Preloader/Preloader';
 import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM } from '../../utils/constants';
 
-const SavedMovies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, savedFilms, infoTextSavedMovies, setInfoTextSavedMovies, preloader, deleteUsersFilm, setSavedFilms, searchText, setSearchText }) => {
-
+const SavedMovies = ({ windowWidth, savedFilms, infoTextSavedMovies, setInfoTextSavedMovies, preloader, deleteUsersFilm, setSavedFilms, }) => {
+    const [searchText, setSearchText] = React.useState('');
     const [shortsSavedFilms, setShortsSavedFilms] = React.useState([]);
+    const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(false);
+    const [numberFilms, setNumberFilms] = React.useState(0);
     React.useEffect(() => {
         setInfoTextSavedMovies('У вас нет сохранненных фильмов');
         setShortsSavedFilms(savedFilms.filter(({ duration }) => duration <= DURATION_SHORT_FILM))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    React.useEffect(() => {
+        if (windowWidth >= SCREEN_WIDTH_1280) {
+            setNumberFilms(12)
+        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
+            setNumberFilms(8)
+        } else {
+            setNumberFilms(5)
+        }
+    }, [windowWidth]);
 
     const handleMoreFilms = () => {
         if (windowWidth >= SCREEN_WIDTH_1280) {
@@ -61,7 +73,6 @@ const SavedMovies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, n
             }
         }
     }
-
 
     return (
         <section className='saved-movies'>

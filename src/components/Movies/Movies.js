@@ -4,9 +4,22 @@ import SearchForm from '../SearchForm/SearchForm.js';
 import Preloader from '../Preloader/Preloader.js';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { getMovies } from '../../utils/MoviesApi';
-import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM, ALL_MOVIES_FROM_LOCAL_STORAGE } from '../../utils/constants';
+import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM, ALL_MOVIES_FROM_LOCAL_STORAGE, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE,} from '../../utils/constants';
 
-const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, numberFilms, setNumberFilms, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, searchText, setSearchText, infoText, setInfoText, searchResult, setSearchResult }) => {
+const Movies = ({ windowWidth, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, infoText, setInfoText, searchResult, setSearchResult }) => {
+    const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE === 'true' ? true : false);
+    const [searchText, setSearchText] = React.useState(SEARCH_TEXT_FROM_LOCAL_STORAGE);
+    const [numberFilms, setNumberFilms] = React.useState(0);
+
+    React.useEffect(() => {
+        if (windowWidth >= SCREEN_WIDTH_1280) {
+            setNumberFilms(12)
+        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
+            setNumberFilms(8)
+        } else {
+            setNumberFilms(5)
+        }
+    }, [windowWidth]);
 
     const handleMoreFilms = () => {
         if (windowWidth >= SCREEN_WIDTH_1280) {
@@ -69,7 +82,7 @@ const Movies = ({ windowWidth, shortFilmsCheckbox, setShortFilmsCheckbox, number
             setSearchResult(data);
         };
     };
-    
+
     return (
         <div className='movies'>
             <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />

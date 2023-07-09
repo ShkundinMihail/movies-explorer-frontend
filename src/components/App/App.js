@@ -18,7 +18,7 @@ import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
 import { registerUser, loginUser, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, FILMS_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, FIRST_VISIT_SITE } from '../../utils/constants';
+import { TOKEN, FILMS_FROM_LOCAL_STORAGE, FIRST_VISIT_SITE } from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
@@ -27,14 +27,12 @@ function App() {
     const [animation, setAnimation] = React.useState(false);
     const [infoToolTipVisible, setInfoToolTipVisible] = React.useState(false);
     const [messageText, setMessageText] = React.useState('');
-    const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(false);
-    const [numberFilms, setNumberFilms] = React.useState(0);
+
     const [savedFilms, setSavedFilms] = React.useState([]);
     const [infoTextSavedMovies, setInfoTextSavedMovies] = React.useState('');
     const [preloader, setPreloader] = React.useState(false);
-    const [searchText, setSearchText] = React.useState('');
-    const [infoText, setInfoText] = React.useState('');
-    const [searchResult, setSearchResult] = React.useState([]);
+    const [infoText, setInfoText] = React.useState('Введите запрос');
+    const [searchResult, setSearchResult] = React.useState(FILMS_FROM_LOCAL_STORAGE ? JSON.parse(FILMS_FROM_LOCAL_STORAGE) : []);
     const { pathname } = useLocation();
     const windowWidth = useResize().width;
     const navigate = useNavigate();
@@ -47,42 +45,16 @@ function App() {
         if (loggedIn && !FIRST_VISIT_SITE && (pathname === 'movies' || pathname === '/')) {
             navigate('/movies', { replace: true });
         }
-        if (STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE && loggedIn) {
-            setShortFilmsCheckbox(JSON.parse(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE));
-        };
-        setInfoText('Введите запрос');
-        if (FILMS_FROM_LOCAL_STORAGE === (null || undefined || false) && loggedIn) {
-            setSearchResult([]);
-        } else {
-            setSearchResult(JSON.parse(FILMS_FROM_LOCAL_STORAGE));
-        };
-        if (SEARCH_TEXT_FROM_LOCAL_STORAGE === (null || undefined || false) && loggedIn) {
-            setSearchText('');
-        } else {
-            setSearchText(SEARCH_TEXT_FROM_LOCAL_STORAGE);
-        };
         if (loggedIn) {
+            sessionStorage.setItem('entrance', true);
             handleSavedFilms();
             handleUserInfo();
-            sessionStorage.setItem('entrance', true);
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    React.useEffect(() => {
-        localStorage.setItem('checkboxShortFilms', JSON.stringify(shortFilmsCheckbox));
-    },
-        [shortFilmsCheckbox]);
-
-    React.useEffect(() => {
-        if (windowWidth >= SCREEN_WIDTH_1280) {
-            setNumberFilms(12)
-        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
-            setNumberFilms(8)
-        } else {
-            setNumberFilms(5)
-        }
-    }, [windowWidth]);
+   
 
     //userBlock////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleRegisterUser = ({ name, email, password }) => {
@@ -93,6 +65,8 @@ function App() {
                     .then((res) => {
                         localStorage.setItem('token', res.token);
                         setLoggedIn(true);
+                        handleSavedFilms();
+                        handleUserInfo();
                         setInfoToolTipVisible(true)
                         setMessageText('Регистрация прошла успешно!')
                         navigate('/movies', { replace: true })
@@ -124,6 +98,8 @@ function App() {
                 setMessageText('Добро пожаловать!');
                 navigate('/movies', { replace: true });
                 setLoggedIn(true);
+                handleSavedFilms();
+                handleUserInfo();
             })
             .catch((err) => {
                 setInfoToolTipVisible(true);
@@ -182,8 +158,6 @@ function App() {
         sessionStorage.removeItem('entrance');
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
-        setSearchText('');
-        setShortFilmsCheckbox(false);
         setLoggedIn(false);
         navigate('/', { replace: true });
     };
@@ -251,10 +225,6 @@ function App() {
                             element={Movies}
                             loggedIn={loggedIn}
                             windowWidth={windowWidth}
-                            shortFilmsCheckbox={shortFilmsCheckbox}
-                            setShortFilmsCheckbox={setShortFilmsCheckbox}
-                            numberFilms={numberFilms}
-                            setNumberFilms={setNumberFilms}
                             addFilmToUser={addFilmToUser}
                             preloader={preloader}
                             setPreloader={setPreloader}
@@ -265,26 +235,18 @@ function App() {
                             setInfoText={setInfoText}
                             searchResult={searchResult}
                             setSearchResult={setSearchResult}
-                            searchText={searchText}
-                            setSearchText={setSearchText}
                         />} />
                     <Route path='/saved-movies' element={
                         <ProtectedRoute
                             element={SavedMovies}
                             loggedIn={loggedIn}
-                            numberFilms={numberFilms}
                             windowWidth={windowWidth}
-                            shortFilmsCheckbox={shortFilmsCheckbox}
-                            setShortFilmsCheckbox={setShortFilmsCheckbox}
-                            setNumberFilms={setNumberFilms}
                             savedFilms={savedFilms}
                             setSavedFilms={setSavedFilms}
                             infoTextSavedMovies={infoTextSavedMovies}
                             setInfoTextSavedMovies={setInfoTextSavedMovies}
                             preloader={preloader}
-                            deleteUsersFilm={deleteUsersFilm}
-                            searchText={searchText}
-                            setSearchText={setSearchText} />} />
+                            deleteUsersFilm={deleteUsersFilm} />} />
                     <Route path='/profile' element={
                         <ProtectedRoute element={Profile}
                             handleUserUpdate={handleUserUpdate}

@@ -9,6 +9,7 @@ const SearchForm = ({ setSearchText, searchText, handleFilms, shortFilmsCheckbox
     
     const handleShortChange = () => {
         setShortFilmsCheckbox(!shortFilmsCheckbox);
+        localStorage.setItem('checkboxShortFilms', !shortFilmsCheckbox);
     };
 
     const changeInput = (e) => {
@@ -32,7 +33,7 @@ const SearchForm = ({ setSearchText, searchText, handleFilms, shortFilmsCheckbox
                     type="text"
                     placeholder="Фильм"
                     required
-                    value={searchText}
+                    value={searchText ? searchText : ''}
                 />
                 <button
                     className="search-form__button"
