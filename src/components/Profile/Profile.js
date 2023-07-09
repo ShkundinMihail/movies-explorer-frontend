@@ -12,7 +12,7 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
     const [userEmailDirty, setUserEmailDirty] = React.useState(false);
     const [userNameError, setUserNameError] = React.useState('');
     const [userEmailError, setUserEmailError] = React.useState('');
-
+    //console.log(context)
     React.useEffect(() => {
         setUserName(context.name);
         setUserEmail(context.email);
@@ -22,7 +22,7 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
         if (e.target.value.length === 0) {
             setUserNameError('Поле не должно быть пустым');
             setUserNameDirty(true);
-        } else if (e.target.value.length < 2 || e.target.value.length > 40) {
+        } else if (e.target.value.length < 2 || e.target.value.length > 30) {
             setUserNameError('Имя должно быть от 2 до 40 символов');
             setUserNameDirty(true);
         } else {
@@ -36,7 +36,7 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
         if (e.target.value.length === 0) {
             setUserEmailError('Поле не должно быть пустым');
             setUserEmailDirty(true);
-        } else if (e.target.value.length > 40 || e.target.value.length < 6) {
+        } else if (e.target.value.length > 30 || e.target.value.length < 6) {
             setUserEmailError('Email должно быть от 6 до 40 символов');
             setUserEmailDirty(true);
         } else if (!REGEX_EMAIL.test(String(e.target.value).toLowerCase())) {
@@ -73,7 +73,7 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
                         type='text'
                         className={editProfile ? "profile__form-value" : 'profile__form-value profile__form-value_diasbled'}
                         name='name'
-                        value={userName}
+                        value={editProfile ? userName : context.name}
                         placeholder='Имя'
                         required
                     />
@@ -86,13 +86,13 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
                         type='email'
                         className={editProfile ? "profile__form-value" : 'profile__form-value profile__form-value_diasbled'}
                         name='email'
-                        value={userEmail}
+                        value={editProfile ? userEmail : context.email}//сделал так потому что даже после неудачного апдейта у меня в поле оставалось значение которое не удалось сохранить
                         placeholder="Email"
                         required
                     />
                     {userEmailDirty && <span className='profile__form-error'>{userEmailError}</span>}
                 </div>
-                <button disabled={(userNameDirty || userEmailDirty )} className={editProfile ? 'profile__form-btn' : 'profile__form-btn profile__form-btn_none'} onClick={handleSubmit}>Сохранить</button>
+                <button disabled={(userNameDirty || userEmailDirty)} className={editProfile ? 'profile__form-btn' : 'profile__form-btn profile__form-btn_none'} onClick={handleSubmit}>Сохранить</button>
             </form>
 
             <div className="profile__nav">

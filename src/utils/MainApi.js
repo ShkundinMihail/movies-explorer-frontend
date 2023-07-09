@@ -65,7 +65,6 @@ export const createUserMovies = (film) => {
 };
 
 export const deleteUserMovies = (filmID) => {
-    console.log(filmID)
     return fetch(`${BASE_URL}/movies/${filmID}`, {
         method: 'DELETE',
         headers: HEADERS,

@@ -39,7 +39,6 @@ function App() {
     const [userInfo, setUserInfo] = React.useState({
         name: '',
         email: '',
-        password: '',
     });
     React.useEffect(() => {
         if (loggedIn && !FIRST_VISIT_SITE && (pathname === 'movies' || pathname === '/')) {
@@ -54,7 +53,7 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-   
+
 
     //userBlock////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const handleRegisterUser = ({ name, email, password }) => {
@@ -135,7 +134,6 @@ function App() {
                 setUserInfo({
                     name: res.user.name,
                     email: res.user.email,
-                    password: ''
                 })
             })
             .catch((err) => {
