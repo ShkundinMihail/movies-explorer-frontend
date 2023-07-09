@@ -8,18 +8,14 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
     const [editProfile, setEditProfile] = React.useState(false);
     const [userName, setUserName] = React.useState('');
     const [userEmail, setUserEmail] = React.useState('');
-    const [userPassword, setUserPassword] = React.useState('');
     const [userNameDirty, setUserNameDirty] = React.useState(false);
     const [userEmailDirty, setUserEmailDirty] = React.useState(false);
-    const [userPasswordDirty, setUserPasswordDirty] = React.useState(false);
     const [userNameError, setUserNameError] = React.useState('');
     const [userEmailError, setUserEmailError] = React.useState('');
-    const [userPasswordError, setUserPasswordError] = React.useState('');
 
     React.useEffect(() => {
         setUserName(context.name);
         setUserEmail(context.email);
-        setUserPassword(context.password);
     }, [context])
     const changeName = (e) => {
         setUserName(e.target.value)
@@ -51,19 +47,6 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
             setUserEmailDirty(false);
         }
     };
-    const changePassword = (e) => {
-        setUserPassword(e.target.value)
-        if (e.target.value.length === 0) {
-            setUserPasswordError('Поле не должно быть пустым');
-            setUserPasswordDirty(true);
-        } else if (e.target.value.length > 40 || e.target.value.length < 8) {
-            setUserPasswordError('Пароль должно быть от 8 до 40 символов');
-            setUserPasswordDirty(true);
-        } else {
-            setUserPasswordError('');
-            setUserPasswordDirty(false);
-        }
-    };
 
     const handleClickEditProfile = () => {
         setEditProfile(true);
@@ -75,7 +58,6 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
         handleUserUpdate({
             name: userName,
             email: userEmail,
-            password: userPassword
         });
         setEditProfile(false);
     };
@@ -110,21 +92,7 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
                     />
                     {userEmailDirty && <span className='profile__form-error'>{userEmailError}</span>}
                 </div>
-
-                <div className="profile__form-item profile__form-item_not-line">
-                    <label className="profile__form-key">Пароль</label>
-                    <input
-                        onChange={changePassword}
-                        type='password'
-                        className={editProfile ? "profile__form-value" : 'profile__form-value profile__form-value_diasbled'}
-                        name='password'
-                        value={userPassword}
-                        placeholder='Пароль'
-                        required
-                    />
-                    {userPasswordDirty && <span className='profile__form-error'>{userPasswordError}</span>}
-                </div>
-                <button disabled={(userNameDirty || userEmailDirty || userPasswordDirty)} className={editProfile ? 'profile__form-btn' : 'profile__form-btn profile__form-btn_none'} onClick={handleSubmit}>Сохранить</button>
+                <button disabled={(userNameDirty || userEmailDirty )} className={editProfile ? 'profile__form-btn' : 'profile__form-btn profile__form-btn_none'} onClick={handleSubmit}>Сохранить</button>
             </form>
 
             <div className="profile__nav">

@@ -134,13 +134,13 @@ function App() {
                 setTimeout(() => { setInfoToolTipVisible(false) }, 1500);
             })
     };
-    const handleUserUpdate = ({ name, email, password }) => {
+    const handleUserUpdate = ({ name, email }) => {
         setAnimation(true);
-        updateUserInfo({ name, email, password })
+        updateUserInfo({ name, email })
             .then((res) => {
                 setInfoToolTipVisible(true);
                 setMessageText('Профиль успешно изменён!');
-                setUserInfo({ name: res.name, email: res.email, password: '' });
+                setUserInfo({ name: res.name, email: res.email });
             })
             .catch((err) => {
                 setInfoToolTipVisible(true);
