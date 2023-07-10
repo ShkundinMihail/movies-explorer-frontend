@@ -13,6 +13,9 @@ const SavedMovies = ({ windowWidth, savedFilms, infoTextSavedMovies, setInfoText
     React.useEffect(() => {
         setInfoTextSavedMovies('У вас нет сохранненных фильмов');
         setShortsSavedFilms(savedFilms.filter(({ duration }) => duration <= DURATION_SHORT_FILM))
+        if (shortsSavedFilms.length === 0 && shortFilmsCheckbox) {
+            setInfoTextSavedMovies('Ничего не найдено');
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -79,7 +82,7 @@ const SavedMovies = ({ windowWidth, savedFilms, infoTextSavedMovies, setInfoText
             <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
             {preloader ? <Preloader /> :
                 <>
-                    {(savedFilms === null || savedFilms.length === 0) ? <p className='saved-movies__info-text'>{infoTextSavedMovies}</p> :
+                    {((!savedFilms || savedFilms.length === 0) || (shortsSavedFilms.length === 0 && shortFilmsCheckbox)) ? <p className='saved-movies__info-text'>{infoTextSavedMovies}</p> :
                         <>
                             <MoviesCardList movies={!shortFilmsCheckbox ? savedFilms : shortsSavedFilms} numberFilms={numberFilms} savedFilms={savedFilms} deleteUsersFilm={deleteUsersFilm} />
                             <button className={moreFilmsButtonVisible()} onClick={handleMoreFilms}>Ещё</button>
