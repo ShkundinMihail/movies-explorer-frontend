@@ -6,7 +6,7 @@ import searchFormButton from '../../images/findsearch.svg';
 const SearchForm = ({ setSearchText, searchText, handleFilms, shortFilmsCheckbox, setShortFilmsCheckbox }) => {
     const [blurInput, setBlurInput] = React.useState(false);
     const [focusInput, setFocusInput] = React.useState(false);
-    
+   
     const handleShortChange = () => {
         setShortFilmsCheckbox(!shortFilmsCheckbox);
         localStorage.setItem('checkboxShortFilms', !shortFilmsCheckbox);

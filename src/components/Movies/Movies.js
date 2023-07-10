@@ -4,12 +4,15 @@ import SearchForm from '../SearchForm/SearchForm.js';
 import Preloader from '../Preloader/Preloader.js';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { getMovies } from '../../utils/MoviesApi';
-import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM, ALL_MOVIES_FROM_LOCAL_STORAGE, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE, SEARCH_TEXT_FROM_LOCAL_STORAGE,} from '../../utils/constants';
+import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM, ALL_MOVIES_FROM_LOCAL_STORAGE, STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE } from '../../utils/constants';
 
-const Movies = ({ windowWidth, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, infoText, setInfoText, searchResult, setSearchResult }) => {
+const Movies = ({ searchTextFromMovies, setSearchTextFromMovies, windowWidth, addFilmToUser, setPreloader, preloader, savedFilms, setSavedFilms, deleteUsersFilm, infoText, setInfoText, searchResult, setSearchResult }) => {
     const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE === 'true' ? true : false);
-    const [searchText, setSearchText] = React.useState(SEARCH_TEXT_FROM_LOCAL_STORAGE);
     const [numberFilms, setNumberFilms] = React.useState(0);
+
+    React.useEffect(() => {
+        setShortFilmsCheckbox(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE === 'true' ? true : false);//выглядит тупо, но при переходе от сохр. фильмов к фильмам состояние чекбокса теперь актуально
+    }, []);
 
     React.useEffect(() => {
         if (windowWidth >= SCREEN_WIDTH_1280) {
@@ -42,7 +45,7 @@ const Movies = ({ windowWidth, addFilmToUser, setPreloader, preloader, savedFilm
 
     const handleFilms = () => {
         setPreloader(true);
-        localStorage.setItem('searchText', searchText);
+        localStorage.setItem('searchText', searchTextFromMovies);
         if (!ALL_MOVIES_FROM_LOCAL_STORAGE) {
             getMovies()
                 .then((res) => {
@@ -63,12 +66,12 @@ const Movies = ({ windowWidth, addFilmToUser, setPreloader, preloader, savedFilm
             setPreloader(false);
         }
     };
-    const movieSearchLogic = (object) => {
+    const movieSearchLogic = (array) => {
         let data
-        if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
-            data = object.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase()));
+        if (CYRILLIC_REGEX.test(String(searchTextFromMovies).toLowerCase())) {
+            data = array.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchTextFromMovies.toLowerCase()));
         } else {
-            data = object.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase()));
+            data = array.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchTextFromMovies.toLowerCase()));
         }
         if (shortFilmsCheckbox) {
             data = data.filter(({ duration }) => duration <= DURATION_SHORT_FILM)
@@ -85,10 +88,10 @@ const Movies = ({ windowWidth, addFilmToUser, setPreloader, preloader, savedFilm
 
     return (
         <div className='movies'>
-            <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
+            <SearchForm searchText={searchTextFromMovies} setSearchText={setSearchTextFromMovies} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
             {preloader ? <Preloader /> :
                 <>
-                    {(searchResult === null || searchResult.length === 0) ? <p className='movies__info-text'>{infoText}</p> :
+                    {(!searchResult || searchResult.length === 0) ? <p className='movies__info-text'>{infoText}</p> :
                         <>
                             <MoviesCardList numberFilms={numberFilms} movies={searchResult} addFilmToUser={addFilmToUser} savedFilms={savedFilms} setSavedFilms={setSavedFilms} deleteUsersFilm={deleteUsersFilm} />
                             <button className={moreFilmsButtonVisible()} onClick={handleMoreFilms}>Ещё</button>

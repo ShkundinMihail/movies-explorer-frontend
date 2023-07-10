@@ -18,7 +18,7 @@ import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
 import InfoToolTip from '../InfoToolTip/InfoToolTip';
 
 import { registerUser, loginUser, getUserInfo, updateUserInfo, createUserMovies, deleteUserMovies, getUserMovies } from '../../utils/MainApi';
-import { TOKEN, FILMS_FROM_LOCAL_STORAGE, FIRST_VISIT_SITE } from '../../utils/constants';
+import { TOKEN, FILMS_FROM_LOCAL_STORAGE, FIRST_VISIT_SITE, SEARCH_TEXT_FROM_LOCAL_STORAGE } from '../../utils/constants';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
     const [animation, setAnimation] = React.useState(false);
     const [infoToolTipVisible, setInfoToolTipVisible] = React.useState(false);
     const [messageText, setMessageText] = React.useState('');
-
+    const [searchTextFromMovies, setSearchTextFromMovies] = React.useState(SEARCH_TEXT_FROM_LOCAL_STORAGE);
     const [savedFilms, setSavedFilms] = React.useState([]);
     const [infoTextSavedMovies, setInfoTextSavedMovies] = React.useState('');
     const [preloader, setPreloader] = React.useState(false);
@@ -157,6 +157,7 @@ function App() {
         setUserInfo({ name: '', email: '', password: '' });
         setSearchResult([]);
         setLoggedIn(false);
+        setSearchTextFromMovies('');
         navigate('/', { replace: true });
     };
     ///burger////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,6 +234,8 @@ function App() {
                             setInfoText={setInfoText}
                             searchResult={searchResult}
                             setSearchResult={setSearchResult}
+                            searchTextFromMovies={searchTextFromMovies}
+                            setSearchTextFromMovies={setSearchTextFromMovies}
                         />} />
                     <Route path='/saved-movies' element={
                         <ProtectedRoute
