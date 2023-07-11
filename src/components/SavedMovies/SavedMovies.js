@@ -23,7 +23,7 @@ const SavedMovies = ({
   const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(false);
   const [numberFilms, setNumberFilms] = React.useState(0);
   const [searchBySavedFilms, setSearchBySavedFilms] = React.useState([]);
-  const [statusSearch, setStatusSearch] = React.useState(false);
+  const [searchStatus, setSearchStatus] = React.useState(false);
 
   React.useEffect(() => {
     if (windowWidth >= SCREEN_WIDTH_1280) {
@@ -75,7 +75,7 @@ const SavedMovies = ({
     let films;
     setSearchBySavedFilms([]);
     setInfoTextSavedMovies("");
-    setStatusSearch(true);
+    setSearchStatus(true);
     if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
       films = savedFilms.filter(({ nameRU }) =>
         nameRU.toLowerCase().includes(searchText.toLowerCase())
@@ -109,7 +109,7 @@ const SavedMovies = ({
           savedFilms.length === 0 ||
           infoTextSavedMovies ||
           (shortFilmsCheckbox &&
-            statusSearch &&
+            searchStatus &&
             getShortFilms(searchBySavedFilms).length === 0) ? (
             <p className="saved-movies__info-text">
               {infoTextSavedMovies
@@ -122,7 +122,7 @@ const SavedMovies = ({
             <>
               <MoviesCardList
                 movies={
-                  !statusSearch
+                  !searchStatus
                     ? !shortFilmsCheckbox
                       ? savedFilms
                       : getShortFilms(savedFilms)
@@ -136,7 +136,7 @@ const SavedMovies = ({
               />
               <button
                 className={moreFilmsButtonVisible(
-                  !statusSearch
+                  !searchStatus
                     ? !shortFilmsCheckbox
                       ? savedFilms
                       : getShortFilms(savedFilms)
