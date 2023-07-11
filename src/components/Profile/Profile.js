@@ -12,11 +12,12 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
   const [userEmailDirty, setUserEmailDirty] = React.useState(false);
   const [userNameError, setUserNameError] = React.useState("");
   const [userEmailError, setUserEmailError] = React.useState("");
-  //console.log(context)
+
   React.useEffect(() => {
     setUserName(context.name);
     setUserEmail(context.email);
   }, [context]);
+
   const changeName = (e) => {
     setUserName(e.target.value);
     if (e.target.value.length === 0) {
@@ -104,7 +105,11 @@ const Profile = ({ handleUserUpdate, handleLogout }) => {
           )}
         </div>
         <button
-          disabled={userNameDirty || userEmailDirty}
+          disabled={
+            userNameDirty ||
+            userEmailDirty ||
+            (userName === context.name && userEmail === context.email)
+          }
           className={
             editProfile
               ? "profile__form-btn"

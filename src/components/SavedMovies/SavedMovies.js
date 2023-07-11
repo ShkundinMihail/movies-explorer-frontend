@@ -155,5 +155,5 @@ const SavedMovies = ({
     </section>
   );
 };
-
+//обычный форматер сломался ))))) Пришлось ставить Prettier
 export default SavedMovies;
