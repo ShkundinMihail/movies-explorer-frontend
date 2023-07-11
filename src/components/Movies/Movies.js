@@ -11,8 +11,13 @@ const Movies = ({ searchTextFromMovies, setSearchTextFromMovies, windowWidth, ad
     const [numberFilms, setNumberFilms] = React.useState(0);
 
     React.useEffect(() => {
-        setShortFilmsCheckbox(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE === 'true' ? true : false);//выглядит тупо, но при переходе от сохр. фильмов к фильмам состояние чекбокса теперь актуально
+        setShortFilmsCheckbox(STATUS_SHORT_FILMS_CHECKBOX_FROM_LOCAL_STORAGE === 'true' ? true : false);
+
     }, []);
+
+    React.useEffect(() => {
+        localStorage.setItem('checkboxShortFilms', shortFilmsCheckbox);
+    }, [shortFilmsCheckbox]);
 
     React.useEffect(() => {
         if (windowWidth >= SCREEN_WIDTH_1280) {

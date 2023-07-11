@@ -1,95 +1,159 @@
-import React from 'react';
-import './SavedMovies.css';
-import SearchForm from '../SearchForm/SearchForm';
-import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import Preloader from '../Preloader/Preloader';
-import { CYRILLIC_REGEX, SCREEN_WIDTH_1280, SCREEN_WIDTH_768, DURATION_SHORT_FILM } from '../../utils/constants';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React from "react";
+import "./SavedMovies.css";
+import SearchForm from "../SearchForm/SearchForm";
+import MoviesCardList from "../MoviesCardList/MoviesCardList";
+import Preloader from "../Preloader/Preloader";
+import {
+  CYRILLIC_REGEX,
+  SCREEN_WIDTH_1280,
+  SCREEN_WIDTH_768,
+  DURATION_SHORT_FILM,
+} from "../../utils/constants";
 
-const SavedMovies = ({ windowWidth, savedFilms, infoTextSavedMovies, setInfoTextSavedMovies, preloader, deleteUsersFilm, setSavedFilms, }) => {
-    const [searchText, setSearchText] = React.useState('');
-    const [shortsSavedFilms, setShortsSavedFilms] = React.useState([]);
-    const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(false);
-    const [numberFilms, setNumberFilms] = React.useState(0);
-    React.useEffect(() => {
-        setInfoTextSavedMovies('У вас нет сохранненных фильмов');
-        setShortsSavedFilms(savedFilms.filter(({ duration }) => duration <= DURATION_SHORT_FILM))
-        if (shortsSavedFilms.length === 0 && shortFilmsCheckbox) {
-            setInfoTextSavedMovies('Ничего не найдено');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+const SavedMovies = ({
+  windowWidth,
+  savedFilms,
+  infoTextSavedMovies,
+  setInfoTextSavedMovies,
+  preloader,
+  deleteUsersFilm,
+}) => {
+  const [searchText, setSearchText] = React.useState("");
+  const [shortFilmsCheckbox, setShortFilmsCheckbox] = React.useState(false);
+  const [numberFilms, setNumberFilms] = React.useState(0);
+  const [searchBySavedFilms, setSearchBySavedFilms] = React.useState([]);
+  const [statusSearch, setStatusSearch] = React.useState(false);
 
-    React.useEffect(() => {
-        if (windowWidth >= SCREEN_WIDTH_1280) {
-            setNumberFilms(12)
-        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
-            setNumberFilms(8)
-        } else {
-            setNumberFilms(5)
-        }
-    }, [windowWidth]);
-
-    const handleMoreFilms = () => {
-        if (windowWidth >= SCREEN_WIDTH_1280) {
-            setNumberFilms(numberFilms + 3)
-        } else if (windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) {
-
-            setNumberFilms(numberFilms + 2)
-        } else {
-            setNumberFilms(numberFilms + 1)
-        }
-    };
-
-    const moreFilmsButtonVisible = () => {
-        if (!shortFilmsCheckbox && (savedFilms.length === 0 || (savedFilms.length <= 12 && windowWidth >= SCREEN_WIDTH_1280) || (savedFilms.length <= 8 && windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) || (savedFilms.length <= 5 && windowWidth < SCREEN_WIDTH_768) || (savedFilms.length <= numberFilms))) {
-            return 'saved-movies__button-more saved-movies__button-more_hidden'
-        } else if (shortFilmsCheckbox && ((shortsSavedFilms.length === 0 || (shortsSavedFilms.length <= 12 && windowWidth >= SCREEN_WIDTH_1280) || (shortsSavedFilms.length <= 8 && windowWidth > SCREEN_WIDTH_768 && windowWidth < SCREEN_WIDTH_1280) || (shortsSavedFilms.length <= 5 && windowWidth < SCREEN_WIDTH_768) || (shortsSavedFilms.length <= numberFilms)))) {
-            return 'saved-movies__button-more saved-movies__button-more_hidden'
-        } else {
-            return 'saved-movies__button-more'
-        }
-    };
-    const handleFilms = () => {
-        localStorage.setItem('searchText', searchText);
-        if (!shortFilmsCheckbox) {
-            if (savedFilms.length > 0) {
-                if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
-                    setSavedFilms(savedFilms.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase())));
-                } else {
-                    setSavedFilms(savedFilms.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase())));
-                }
-            } else if (savedFilms.length === 0) {
-                setInfoTextSavedMovies('Ничего не найдено');
-            }
-        } else if (shortFilmsCheckbox) {
-            setShortsSavedFilms(savedFilms.filter(({ duration }) => duration <= DURATION_SHORT_FILM))
-            if (shortsSavedFilms.length > 0) {
-                if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
-                    setShortsSavedFilms(shortsSavedFilms.filter(({ nameRU }) => nameRU.toLowerCase().includes(searchText.toLowerCase())));
-                    if (shortFilmsCheckbox.length === 0) { setInfoTextSavedMovies('Ничего не найдено'); }
-                } else {
-                    setShortsSavedFilms(shortsSavedFilms.filter(({ nameEN }) => nameEN.toLowerCase().includes(searchText.toLowerCase())));
-                    if (shortFilmsCheckbox.length === 0) { setInfoTextSavedMovies('Ничего не найдено'); }
-                }
-            } else if (shortsSavedFilms.length === 0) {
-                setInfoTextSavedMovies('Ничего не найдено');
-            }
-        }
+  React.useEffect(() => {
+    if (windowWidth >= SCREEN_WIDTH_1280) {
+      setNumberFilms(12);
+    } else if (
+      windowWidth > SCREEN_WIDTH_768 &&
+      windowWidth < SCREEN_WIDTH_1280
+    ) {
+      setNumberFilms(8);
+    } else {
+      setNumberFilms(5);
     }
+  }, [windowWidth]);
 
-    return (
-        <section className='saved-movies'>
-            <SearchForm searchText={searchText} setSearchText={setSearchText} handleFilms={handleFilms} shortFilmsCheckbox={shortFilmsCheckbox} setShortFilmsCheckbox={setShortFilmsCheckbox} />
-            {preloader ? <Preloader /> :
-                <>
-                    {((!savedFilms || savedFilms.length === 0) || (shortsSavedFilms.length === 0 && shortFilmsCheckbox)) ? <p className='saved-movies__info-text'>{infoTextSavedMovies}</p> :
-                        <>
-                            <MoviesCardList movies={!shortFilmsCheckbox ? savedFilms : shortsSavedFilms} numberFilms={numberFilms} savedFilms={savedFilms} deleteUsersFilm={deleteUsersFilm} />
-                            <button className={moreFilmsButtonVisible()} onClick={handleMoreFilms}>Ещё</button>
-                        </>}
-                </>}
-        </section>
-    )
+  const handleMoreFilms = () => {
+    if (windowWidth >= SCREEN_WIDTH_1280) {
+      setNumberFilms(numberFilms + 3);
+    } else if (
+      windowWidth > SCREEN_WIDTH_768 &&
+      windowWidth < SCREEN_WIDTH_1280
+    ) {
+      setNumberFilms(numberFilms + 2);
+    } else {
+      setNumberFilms(numberFilms + 1);
+    }
+  };
+
+  const moreFilmsButtonVisible = (films) => {
+    if (
+      films.length === 0 ||
+      (films.length <= 12 && windowWidth >= SCREEN_WIDTH_1280) ||
+      (films.length <= 8 &&
+        windowWidth > SCREEN_WIDTH_768 &&
+        windowWidth < SCREEN_WIDTH_1280) ||
+      (films.length <= 5 && windowWidth < SCREEN_WIDTH_768) ||
+      films.length <= numberFilms
+    ) {
+      return "saved-movies__button-more saved-movies__button-more_hidden";
+    } else {
+      return "saved-movies__button-more";
+    }
+  };
+
+  const getShortFilms = (films) => {
+    return films.filter(({ duration }) => duration <= DURATION_SHORT_FILM);
+  };
+
+  const searchInSavedMovies = () => {
+    let films;
+    setSearchBySavedFilms([]);
+    setInfoTextSavedMovies("");
+    setStatusSearch(true);
+    if (CYRILLIC_REGEX.test(String(searchText).toLowerCase())) {
+      films = savedFilms.filter(({ nameRU }) =>
+        nameRU.toLowerCase().includes(searchText.toLowerCase())
+      );
+    } else {
+      films = savedFilms.filter(({ nameEN }) =>
+        nameEN.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    if (films.length === 0) {
+      setInfoTextSavedMovies("Ничего не найдено");
+    } else {
+      setSearchBySavedFilms(films);
+    }
+  };
+
+  return (
+    <section className="saved-movies">
+      <SearchForm
+        searchText={searchText}
+        setSearchText={setSearchText}
+        handleFilms={searchInSavedMovies}
+        shortFilmsCheckbox={shortFilmsCheckbox}
+        setShortFilmsCheckbox={setShortFilmsCheckbox}
+      />
+      {preloader ? (
+        <Preloader />
+      ) : (
+        <>
+          {!savedFilms ||
+          savedFilms.length === 0 ||
+          infoTextSavedMovies ||
+          (shortFilmsCheckbox &&
+            statusSearch &&
+            getShortFilms(searchBySavedFilms).length === 0) ? (
+            <p className="saved-movies__info-text">
+              {infoTextSavedMovies
+                ? infoTextSavedMovies
+                : savedFilms.length === 0
+                ? "У вас нет сохраненных фильмов"
+                : "Ничего не найдено"}
+            </p>
+          ) : (
+            <>
+              <MoviesCardList
+                movies={
+                  !statusSearch
+                    ? !shortFilmsCheckbox
+                      ? savedFilms
+                      : getShortFilms(savedFilms)
+                    : !shortFilmsCheckbox
+                    ? searchBySavedFilms
+                    : getShortFilms(searchBySavedFilms)
+                }
+                numberFilms={numberFilms}
+                savedFilms={savedFilms}
+                deleteUsersFilm={deleteUsersFilm}
+              />
+              <button
+                className={moreFilmsButtonVisible(
+                  !statusSearch
+                    ? !shortFilmsCheckbox
+                      ? savedFilms
+                      : getShortFilms(savedFilms)
+                    : !shortFilmsCheckbox
+                    ? searchBySavedFilms
+                    : getShortFilms(searchBySavedFilms)
+                )}
+                onClick={handleMoreFilms}
+              >
+                Ещё
+              </button>
+            </>
+          )}
+        </>
+      )}
+    </section>
+  );
 };
 
 export default SavedMovies;
