@@ -5,8 +5,15 @@ import closePopupIcon from '../../images/closePopup.svg';
 import AccountButton from "../AccountButton/AccountButton";
 
 const PopupMenu = ({ openMenu, handleCloseMenu }) => {
+    const closeMenuWhenClickedOnOverlay = (e) => {
+        if (e.target.className === 'popup-menu popup-menu_opened') {
+            handleCloseMenu();
+        }
+    };
+
     return (
-        <div className={openMenu ? 'popup-menu popup-menu_opened' : 'popup-menu'}>
+        <div onClick={closeMenuWhenClickedOnOverlay} className={openMenu ? 'popup-menu popup-menu_opened' : 'popup-menu'}>
+
             <div className='popup-menu__content'>
                 <button className="popup-menu__close-button" onClick={handleCloseMenu}>
                     <img src={closePopupIcon} alt="closePopupIcon" />

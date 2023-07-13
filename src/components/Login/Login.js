@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Login.css';
 import logo from '../../images/logo.svg'
-import { re } from '../../utils/constants'
+import { REGEX_EMAIL } from '../../utils/constants'
 
-const Login = ({ submitUserInfo, setLoggedIn }) => {
-    const navigate = useNavigate()
+const Login = ({ handleLoginUser }) => {
     const [userEmail, setUserEmail] = React.useState('');
     const [userPassword, setUserPassword] = React.useState('');
     const [userEmailDirty, setUserEmailDirty] = React.useState(false);
@@ -21,7 +20,7 @@ const Login = ({ submitUserInfo, setLoggedIn }) => {
         } else if (e.target.value.length > 40 || e.target.value.length < 6) {
             setUserEmailError('Email должно быть от 6 до 40 символов');
             setUserEmailDirty(true);
-        } else if (!re.test(String(e.target.value).toLowerCase())) {
+        } else if (!REGEX_EMAIL.test(String(e.target.value).toLowerCase())) {
             setUserEmailError('Некорректный email');
             setUserEmailDirty(true);
         } else {
@@ -34,8 +33,8 @@ const Login = ({ submitUserInfo, setLoggedIn }) => {
         if (e.target.value.length === 0) {
             setUserPasswordError('Поле не должно быть пустым');
             setUserPasswordDirty(true);
-        } else if (e.target.value.length > 40 || e.target.value.length < 6) {
-            setUserPasswordError('Пароль должно быть от 6 до 40 символов');
+        } else if (e.target.value.length > 40 || e.target.value.length < 8) {
+            setUserPasswordError('Пароль должно быть от 8 до 40 символов');
             setUserPasswordDirty(true);
         } else {
             setUserPasswordError('');
@@ -44,10 +43,10 @@ const Login = ({ submitUserInfo, setLoggedIn }) => {
     };
     const handleSubmitLogin = (e) => {
         e.preventDefault();
-        if (userEmail === submitUserInfo.email && userPassword === submitUserInfo.password) {
-            navigate('/movies', { replace: true })
-            setLoggedIn(true);
-        } else { navigate('/signup', { replace: true }) }
+        handleLoginUser({
+            email: userEmail,
+            password: userPassword
+        })
     };
     return (
         <section className='login'>

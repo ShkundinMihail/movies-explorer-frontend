@@ -4,6 +4,17 @@
     align-items: center;
     max-width: 1140px;
     width: 100%;
+    min-height: 70vh;
+}
+
+.movies__info-text{
+    font-family: Inter;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    color:#A0A0A0;
+    max-width: 200px;
 }
 
 .movies__button-more {
@@ -24,6 +35,10 @@
     text-align: center;
     margin: 80px 0 80px 0;
     cursor: pointer;
+}
+
+.movies__button-more_hidden {
+    visibility: hidden;
 }
 
 .movies__button-more:hover {
